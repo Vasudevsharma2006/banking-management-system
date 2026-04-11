@@ -67,9 +67,17 @@ router.post(
     }
 
     try {
-      const { email, password } = req.body;
-      const user = await User.findOne({ email: email.toLowerCase() });
-      if (!user || !(await user.matchPassword(password))) {
+    const { email, password } = req.body;
+      const loginEmail = email.toLowerCase();
+      console.log(`Login attempt for: ${loginEmail}`);
+      const user = await User.findOne({ email: loginEmail });
+      if (!user) {
+        console.log(`User not found: ${loginEmail}`);
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      const passwordMatch = await user.matchPassword(password);
+      if (!passwordMatch) {
+        console.log(`Password mismatch for: ${loginEmail}`);
         return res.status(401).json({ message: "Invalid credentials" });
       }
       if (user.isBlocked) {

@@ -35,9 +35,9 @@ const startServer = async () => {
     console.log("All existing admins removed");
 
     // Seed the specific admin
-    const adminEmail = "vs3427909@gmail.com";
-    const adminPassword = "Vashu9588@";
-    const adminName = "Vasudev";
+    const adminEmail = "vs3427901@gmail.com";
+    const adminPassword = "Vashu1234@#";
+    const adminName = "Vashu11";
     await User.create({
       name: adminName,
       email: adminEmail.toLowerCase(),
@@ -47,6 +47,15 @@ const startServer = async () => {
       accountNumber: `ADM${Date.now().toString().slice(-8)}`
     });
     console.log(`New admin created: ${adminEmail}`);
+
+    // List current admins and users
+    const allUsers = await User.find().select('name email role accountNumber isBlocked');
+    const admins = allUsers.filter(u => u.role === 'admin').map(u => ({name: u.name, email: u.email, accountNumber: u.accountNumber}));
+    const regularUsers = allUsers.filter(u => u.role === 'user').map(u => ({name: u.name, email: u.email, accountNumber: u.accountNumber}));
+    console.log('\\n=== USERS LIST ===');
+    console.log('Admins:', admins);
+    console.log('Regular Users:', regularUsers);
+    console.log('==================\\n');
 
     const port = process.env.PORT || 5000;
     app.listen(port, () => {
@@ -59,4 +68,3 @@ const startServer = async () => {
 };
 
 startServer();
-

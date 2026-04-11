@@ -24,6 +24,15 @@ router.patch("/users/:id/toggle-block", protect, adminOnly, async (req, res) => 
   }
 });
 
+router.delete("/users/clear-regular", protect, adminOnly, async (req, res) => {
+  try {
+    const result = await User.deleteMany({ role: "user" });
+    return res.json({ message: `Deleted ${result.deletedCount} regular users. Only admins remain.` });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to clear users" });
+  }
+});
+
 router.get("/transactions", protect, adminOnly, async (req, res) => {
   const transactions = await Transaction.find()
     .populate("sender", "name accountNumber")
